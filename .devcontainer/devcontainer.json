@@ -18,6 +18,14 @@
 		"ghcr.io/devcontainers/features/go:1": {
 			"version": "1.23"
 		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"redhat.vscode-yaml",
+				"42Crunch.vscode-openapi"
+			]
+		}
 	}
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],

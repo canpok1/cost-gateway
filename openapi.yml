@@ -1,0 +1,205 @@
+openapi: "3.0.3"
+info:
+  title: cost-gateway
+  version: "1.0"
+servers:
+  - url: http://localhost:3000
+    description: local server
+paths:
+  /api/v1/costs/types:
+    get:
+      summary: コスト種別の取得
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  costTypes:
+                    description: コスト種別
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CostType"
+        "500":
+          description: 内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorObject"
+  /api/v1/costs/monthly:
+    get:
+      summary: 月次コストの取得
+      description: |
+        月次コストを取得する。
+      parameters:
+        - in: query
+          name: costTypeId
+          description: コスト種別ID
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: beginYear
+          description: 期間開始年
+          required: false
+          schema:
+            type: number
+        - in: query
+          name: beginMonth
+          description: 期間開始月
+          required: false
+          schema:
+            type: number
+        - in: query
+          name: endYear
+          description: 期間終了年
+          required: false
+          schema:
+            type: number
+        - in: query
+          name: endMonth
+          description: 期間終了月
+          required: false
+          schema:
+            type: number
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  costs:
+                    description: コスト情報
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Cost"
+                required:
+                  - costs
+        "400":
+          description: パラメータ不備
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorObject"
+        "500":
+          description: 内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorObject"
+    post:
+      summary: 月次コストの登録
+      description: |
+        月次コストを登録する。
+        登録済みのコストは上書きされる。
+        指定されたコスト種別名が未登録の場合、コスト種別名も新規登録される。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                costTypeName:
+                  description: コスト種別名
+                  type: string
+                costs:
+                  description: コスト情報
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      year:
+                        description: コスト発生年
+                        type: number
+                      month:
+                        description: コスト発生月
+                        type: number
+                      yen:
+                        description: コスト(円)
+                        type: number
+              required:
+                - costTypeName
+                - costs
+      responses:
+        "200":
+          description: 登録成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    description: 登録件数
+                    type: number
+                  costTypeId:
+                    description: コスト種別ID
+                    type: number
+                required:
+                  - count
+                  - costTypeId
+        "400":
+          description: パラメータ不備
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorObject"
+        "500":
+          description: 内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorObject"
+components:
+  schemas:
+    ErrorObject:
+      description: エラー情報
+      type: object
+      properties:
+        message:
+          description: エラーメッセージ
+          type: string
+      required:
+        - message
+    CostType:
+      description: コスト種別
+      type: object
+      properties:
+        costTypeId:
+          description: コスト種別ID
+          type: number
+        costTypeName:
+          description: コスト種別名
+          type: string
+      required:
+        - costTypeId
+        - costTypeName
+    Cost:
+      description: コスト
+      type: object
+      properties:
+        costTypeId:
+          description: コスト種別ID
+          type: number
+        costTypeName:
+          description: コスト種別名
+          type: string
+        year:
+          description: コスト発生年
+          type: number
+        month:
+          description: コスト発生月
+          type: number
+        yen:
+          description: コスト（円）
+          type: number
+      required:
+        - costTypeId
+        - costTypeName
+        - year
+        - month
+        - yen
