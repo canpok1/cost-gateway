@@ -39,6 +39,7 @@ test:
 .PHONY: generate
 generate:
 	go generate ./...
+	cd db && sqlc generate
 
 .PHONY: migrate
 migrate:
