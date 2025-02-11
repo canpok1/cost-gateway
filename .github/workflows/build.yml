@@ -43,3 +43,51 @@ jobs:
         run: |
           make generate
           git diff --exit-code
+
+  db_test:
+    runs-on: ubuntu-latest
+    env:
+      MYSQL_DATABASE: code-gateway
+      MYSQL_USER: service
+      MYSQL_PASSWORD: password
+      MYSQL_HOST: localhost
+      MYSQL_PORT: 3306
+    services:
+      db:
+        image: mariadb:11.4
+        env:
+          MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+          MYSQL_DATABASE: code-gateway
+          MYSQL_USER: service
+          MYSQL_PASSWORD: password
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 5
+        ports:
+          - 3306:3306
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install tbls command
+        env:
+          VERSION: 1.81.1
+        run: |
+          curl -o tbls.deb -L https://github.com/k1LoW/tbls/releases/download/v${VERSION}/tbls_${VERSION}-1_amd64.deb
+          sudo dpkg -i tbls.deb
+          rm tbls.deb
+
+      - name: install migrate command
+        env:
+          VERSION: 4.18.2
+        run: |
+          curl -o migrate.deb -L https://github.com/golang-migrate/migrate/releases/download/v${VERSION}/migrate.linux-amd64.deb
+          sudo dpkg -i migrate.deb
+          rm migrate.deb
+
+      - name: test migrate up
+        run: make migrate-up-all
+
+      - name: test migrate down all
+        run: make migrate options="down -all"
