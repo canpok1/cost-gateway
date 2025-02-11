@@ -1,6 +1,6 @@
 ifeq ($(ENV),test)
 	include .devcontainer/db.env.test
-else
+else ifeq ($(ENV),dev)
 	include .devcontainer/db.env.dev
 endif
 

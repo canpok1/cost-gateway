@@ -16,6 +16,9 @@ services:
     entrypoint: /usr/local/share/docker-init.sh
     command: sleep infinity 
 
+    environment:
+      ENV: dev
+
     # Uncomment the next four lines if you will use a ptrace-based debuggers like C++, Go, and Rust.
     # cap_add:
     #  - SYS_PTRACE
