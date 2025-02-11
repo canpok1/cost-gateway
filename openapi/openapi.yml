@@ -3,7 +3,7 @@ info:
   title: cost-gateway
   version: "1.0"
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:8080
     description: local server
 paths:
   /api/v1/costs/types:
@@ -39,31 +39,44 @@ paths:
           description: コスト種別ID
           required: true
           schema:
-            type: number
+            type: integer
+            format: int64
+            minimum: 0
+            maximum: 18446744073709551615
         - in: query
           name: beginYear
           description: 期間開始年
           required: false
           schema:
-            type: number
+            type: integer
+            format: int32
+            minimum: 0
         - in: query
           name: beginMonth
           description: 期間開始月
           required: false
           schema:
-            type: number
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 12
         - in: query
           name: endYear
           description: 期間終了年
           required: false
           schema:
-            type: number
+            type: integer
+            format: int32
+            minimum: 0
         - in: query
           name: endMonth
           description: 期間終了月
           required: false
           schema:
-            type: number
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 12
       responses:
         "200":
           description: 取得成功
@@ -115,13 +128,20 @@ paths:
                     properties:
                       year:
                         description: コスト発生年
-                        type: number
+                        type: integer
+                        format: int32
+                        minimum: 0
                       month:
                         description: コスト発生月
-                        type: number
+                        type: integer
+                        format: int32
+                        minimum: 1
+                        maximum: 12
                       yen:
                         description: コスト(円)
-                        type: number
+                        type: integer
+                        format: int32
+                        minimum: 0
               required:
                 - costTypeName
                 - costs
@@ -135,10 +155,15 @@ paths:
                 properties:
                   count:
                     description: 登録件数
-                    type: number
+                    type: integer
+                    format: int32
+                    minimum: 0
                   costTypeId:
                     description: コスト種別ID
-                    type: number
+                    type: integer
+                    format: int64
+                    minimum: 0
+                    maximum: 18446744073709551615
                 required:
                   - count
                   - costTypeId
@@ -171,7 +196,10 @@ components:
       properties:
         costTypeId:
           description: コスト種別ID
-          type: number
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 18446744073709551615
         costTypeName:
           description: コスト種別名
           type: string
@@ -184,19 +212,29 @@ components:
       properties:
         costTypeId:
           description: コスト種別ID
-          type: number
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 18446744073709551615
         costTypeName:
           description: コスト種別名
           type: string
         year:
           description: コスト発生年
-          type: number
+          type: integer
+          format: int32
+          minimum: 0
         month:
           description: コスト発生月
-          type: number
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 12
         yen:
           description: コスト（円）
-          type: number
+          type: integer
+          format: int32
+          minimum: 0
       required:
         - costTypeId
         - costTypeName

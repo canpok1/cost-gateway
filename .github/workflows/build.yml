@@ -1,11 +1,9 @@
-name: build 
+name: build
 
 on:
   push:
     branches:
-      - '**'
-    tag-ignore:
-      - '*'
+      - "**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,16 +12,34 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: actions/setup-go@v5
-      with:
-        go-version-file: 'go.mod'
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
 
-    - name: Test
-      run: make test
+      - name: Test
+        run: make test
 
-    - name: Build
-      run: make build
+      - name: Build
+        run: make build
+
+  generate-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: Setup
+        run: make setup
+
+      - name: Code generate check
+        run: |
+          make generate
+          git diff --exit-code
