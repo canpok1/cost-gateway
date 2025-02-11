@@ -8,8 +8,11 @@ BUILD_OUTPUT_DIR=build/release
 SERVER_MAIN_FILE=cmd/server/main.go
 SERVER_BINARY=server
 DB_DDL_DIR=db/ddl
+DB_DOC_DIR=docs/database
+DB_URL_FOR_MIGRATE=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST}:${MYSQL_PORT})/${MYSQL_DATABASE}
+DB_URL_FOR_TBLS=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
 
-MIGRATE_COMMAND=migrate -path ${DB_DDL_DIR} -database "mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST}:${MYSQL_PORT})/${MYSQL_DATABASE}"
+MIGRATE_COMMAND=migrate -path ${DB_DDL_DIR} -database "${DB_URL_FOR_MIGRATE}"
 
 .PHONY: setup
 setup:
@@ -66,3 +69,15 @@ migrate-force-v:
 .PHONY: migrate-create
 migrate-create:
 	${MIGRATE_COMMAND} create -ext sql -dir "${DB_DDL_DIR}" -seq ${name}
+
+.PHONY: db-doc
+db-doc:
+	tbls doc "${DB_URL_FOR_TBLS}" "${DB_DOC_DIR}" --rm-dist
+
+.PHONY: db-lint
+db-lint:
+	tbls lint "${DB_URL_FOR_TBLS}"
+
+.PHONY: db-diff
+db-diff:
+	tbls diff "${DB_URL_FOR_TBLS}" "${DB_DOC_DIR}"

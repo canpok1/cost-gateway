@@ -1,0 +1,12 @@
+lint:
+  requireTableComment:
+    enabled: true
+  requireColumnComment:
+    enabled: true
+  requireColumns:
+    enabled: true
+    columns:
+      - name: created_at
+      - name: updated_at
+exclude:
+  - schema_migrations

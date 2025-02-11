@@ -44,7 +44,7 @@ jobs:
           make generate
           git diff --exit-code
 
-  db_test:
+  db-check:
     runs-on: ubuntu-latest
     env:
       MYSQL_DATABASE: code-gateway
@@ -89,5 +89,17 @@ jobs:
       - name: test migrate up
         run: make migrate-up-all
 
+      - name: lint for database
+        run: make db-lint
+
+      - name: make db document
+        run: make db-doc
+
       - name: test migrate down all
         run: make migrate options="down -all"
+
+      - name: archive db docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-doc
+          path: docs/database
