@@ -37,7 +37,7 @@
 <text text-anchor="start" x="124.16" y="-336.6" font-family="Arial" font-size="14.00" fill="#666666">[datetime]</text>
 </g>
 <!-- cost_types -->
-<g id="node3" class="node">
+<g id="node2" class="node">
 <title>cost_types</title>
 <polygon fill="#efefef" stroke="none" points="57.71,-166.4 57.71,-202 272.19,-202 272.19,-166.4 57.71,-166.4"/>
 <polygon fill="none" stroke="black" points="57.71,-166.4 57.71,-202 272.19,-202 272.19,-166.4 57.71,-166.4"/>
@@ -65,7 +65,7 @@
 <text text-anchor="start" x="294.69" y="-503.8" font-family="Arial" font-size="10.00">FOREIGN KEY (cost_type_id) REFERENCES cost_types (id)</text>
 </g>
 <!-- schema_migrations -->
-<g id="node2" class="node">
+<g id="node3" class="node">
 <title>schema_migrations</title>
 <polygon fill="#efefef" stroke="none" points="390.72,-447.6 390.72,-483.2 669.17,-483.2 669.17,-447.6 390.72,-447.6"/>
 <polygon fill="none" stroke="black" points="390.72,-447.6 390.72,-483.2 669.17,-483.2 669.17,-447.6 390.72,-447.6"/>
