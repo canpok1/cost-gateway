@@ -15,3 +15,7 @@ make migrate-force-v v={version}
 make migrate-create name="{migration name}"
 make migrate options="{options}"
 ```
+
+## documents
+
+- [その他ドキュメント（github pages参照）](http://ktnet.info/cost-gateway/)
