@@ -24,3 +24,20 @@ services:
 
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
     # (Adding the "ports" property to this file will not forward from a Codespace.)
+  db:
+    image: "mariadb:11.4"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    env_file:
+      - "db.env"
+    volumes:
+      - "db-store:/var/lib/mysql"
+    ports:
+      - "13306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      start_period: "10s"
+      interval: "10s"
+      retries: 30
+volumes:
+  db-store:
