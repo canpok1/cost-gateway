@@ -43,3 +43,85 @@ jobs:
         run: |
           make generate
           git diff --exit-code
+
+  db-check:
+    runs-on: ubuntu-latest
+    env:
+      MYSQL_DATABASE: code-gateway
+      MYSQL_USER: service
+      MYSQL_PASSWORD: password
+      MYSQL_HOST: localhost
+      MYSQL_PORT: 3306
+    services:
+      db:
+        image: mariadb:11.4
+        env:
+          MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+          MYSQL_DATABASE: code-gateway
+          MYSQL_USER: service
+          MYSQL_PASSWORD: password
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 5
+        ports:
+          - 3306:3306
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install tbls command
+        env:
+          VERSION: 1.81.0
+        run: |
+          curl -o tbls.deb -L https://github.com/k1LoW/tbls/releases/download/v${VERSION}/tbls_${VERSION}-1_amd64.deb
+          sudo dpkg -i tbls.deb
+          rm tbls.deb
+
+      - name: install migrate command
+        env:
+          VERSION: 4.18.2
+        run: |
+          curl -o migrate.deb -L https://github.com/golang-migrate/migrate/releases/download/v${VERSION}/migrate.linux-amd64.deb
+          sudo dpkg -i migrate.deb
+          rm migrate.deb
+
+      - name: test migrate up
+        run: make migrate-up-all
+
+      - name: lint for database
+        run: make db-lint
+
+      - name: make db document
+        run: make db-doc
+
+      - name: test migrate down all
+        run: make migrate options="down -all"
+
+      - name: archive db docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-doc
+          path: docs/database
+
+  deploy_public:
+    runs-on: ubuntu-latest
+    needs: [build, generate-check, db-check]
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download db docs
+        uses: actions/download-artifact@v4
+        with:
+          name: db-doc
+          path: docs/database
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          enable_jekyll: true

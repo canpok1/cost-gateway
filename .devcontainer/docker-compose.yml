@@ -16,6 +16,9 @@ services:
     entrypoint: /usr/local/share/docker-init.sh
     command: sleep infinity 
 
+    environment:
+      ENV: dev
+
     # Uncomment the next four lines if you will use a ptrace-based debuggers like C++, Go, and Rust.
     # cap_add:
     #  - SYS_PTRACE
@@ -24,3 +27,33 @@ services:
 
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
     # (Adding the "ports" property to this file will not forward from a Codespace.)
+  db:
+    image: "mariadb:11.4"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    env_file:
+      - "db.env.dev"
+    volumes:
+      - "db-store:/var/lib/mysql"
+    ports:
+      - "13306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      start_period: "10s"
+      interval: "10s"
+      retries: 30
+  db-test:
+    image: "mariadb:11.4"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    env_file:
+      - "db.env.test"
+    ports:
+      - "13307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      start_period: "10s"
+      interval: "10s"
+      retries: 30
+volumes:
+  db-store:
