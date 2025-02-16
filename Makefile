@@ -21,7 +21,8 @@ setup:
 
 .PHONY: run
 run:
-	go run ${SERVER_MAIN_FILE}
+	export $$(cat .devcontainer/db.env.dev | xargs) \
+	&& go run ${SERVER_MAIN_FILE}
 
 .PHONY: build
 build:

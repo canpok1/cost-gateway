@@ -1,22 +1,41 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/canpok1/code-gateway/internal/api"
+	"github.com/canpok1/code-gateway/internal/db"
+	"github.com/canpok1/code-gateway/internal/environment"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	server := api.NewServer()
+	env, err := environment.LoadEnv()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	database, err := db.Open(env.MysqlHost, env.MysqlPort, env.MysqlUser, env.MysqlPassword, env.MysqlDatabase)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer database.Close()
+
+	client := db.New(database)
+	server := api.NewServer(client)
 
 	r := http.NewServeMux()
 
 	h := api.HandlerFromMux(server, r)
 
+	addr := fmt.Sprintf("0.0.0.0:%d", env.ServerPort)
+	log.Printf("listen : %s\n", addr)
+
 	s := &http.Server{
 		Handler: h,
-		Addr:    "0.0.0.0:8080",
+		Addr:    addr,
 	}
 
 	log.Fatal(s.ListenAndServe())

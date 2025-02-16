@@ -12,7 +12,7 @@ import (
 const getCostTypes = `-- name: GetCostTypes :many
 SELECT id, type_name, created_at, updated_at
 FROM cost_types
-ORDER BY created_by
+ORDER BY created_at
 `
 
 func (q *Queries) GetCostTypes(ctx context.Context) ([]CostType, error) {

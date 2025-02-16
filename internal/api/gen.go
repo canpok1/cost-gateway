@@ -45,6 +45,12 @@ type ErrorObject struct {
 	Message string `json:"message"`
 }
 
+// GetCostsTypesResponse コスト情報取得のレスポンス
+type GetCostsTypesResponse struct {
+	// CostTypes コスト種別
+	CostTypes *[]CostType `json:"costTypes,omitempty"`
+}
+
 // GetApiV1CostsMonthlyParams defines parameters for GetApiV1CostsMonthly.
 type GetApiV1CostsMonthlyParams struct {
 	// CostTypeId コスト種別ID
