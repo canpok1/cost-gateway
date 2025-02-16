@@ -1,18 +1,20 @@
 ifeq ($(ENV),test)
-	include .devcontainer/db.env.test
+	ENV_FILE=.devcontainer/db.env.test
 else ifeq ($(ENV),dev)
-	include .devcontainer/db.env.dev
+	ENV_FILE=.devcontainer/db.env.dev
 endif
 
 BUILD_OUTPUT_DIR=build/release
 SERVER_MAIN_FILE=cmd/server/main.go
 SERVER_BINARY=server
-DB_DDL_DIR=db/ddl
-DB_DOC_DIR=docs/database
-DB_URL_FOR_MIGRATE=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST}:${MYSQL_PORT})/${MYSQL_DATABASE}
-DB_URL_FOR_TBLS=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
 
-MIGRATE_COMMAND=migrate -path ${DB_DDL_DIR} -database "${DB_URL_FOR_MIGRATE}"
+ifdef ENV_FILE
+	MIGRATE_COMMAND=export $$(cat ${ENV_FILE} | xargs) && ./db/migrate.sh
+	TBLS_COMMAND=export $$(cat ${ENV_FILE} | xargs) && tbls --config db/.tbls.yml
+else
+	MIGRATE_COMMAND=./db/migrate.sh
+	TBLS_COMMAND=tbls --config db/.tbls.yml
+endif
 
 .PHONY: setup
 setup:
@@ -21,7 +23,7 @@ setup:
 
 .PHONY: run
 run:
-	export $$(cat .devcontainer/db.env.dev | xargs) \
+	export $$(cat ${ENV_FILE} | xargs) \
 	&& go run ${SERVER_MAIN_FILE}
 
 .PHONY: build
@@ -72,12 +74,12 @@ migrate-create:
 
 .PHONY: db-doc
 db-doc:
-	tbls doc "${DB_URL_FOR_TBLS}" "${DB_DOC_DIR}" --rm-dist
+	${TBLS_COMMAND} doc --rm-dist
 
 .PHONY: db-lint
 db-lint:
-	tbls lint "${DB_URL_FOR_TBLS}"
+	${TBLS_COMMAND} lint
 
 .PHONY: db-diff
 db-diff:
-	tbls diff "${DB_URL_FOR_TBLS}" "${DB_DOC_DIR}"
+	${TBLS_COMMAND} diff

@@ -1,3 +1,4 @@
+dsn: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
 lint:
   requireTableComment:
     enabled: true
@@ -10,3 +11,4 @@ lint:
       - name: updated_at
 exclude:
   - schema_migrations
+docPath: docs/database
