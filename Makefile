@@ -8,12 +8,14 @@ BUILD_OUTPUT_DIR=build/release
 SERVER_MAIN_FILE=cmd/server/main.go
 SERVER_BINARY=server
 
+MIGRATE_SH=./db/migrate.sh
+TBLS_CONFIG=./db/.tbls.yml
 ifdef ENV_FILE
-	MIGRATE_COMMAND=export $$(cat ${ENV_FILE} | xargs) && ./db/migrate.sh
-	TBLS_COMMAND=export $$(cat ${ENV_FILE} | xargs) && tbls --config db/.tbls.yml
+	MIGRATE_COMMAND=export $$(cat ${ENV_FILE} | xargs) && ${MIGRATE_SH}
+	TBLS_COMMAND=export $$(cat ${ENV_FILE} | xargs) && tbls --config ${TBLS_CONFIG}
 else
-	MIGRATE_COMMAND=./db/migrate.sh
-	TBLS_COMMAND=tbls --config db/.tbls.yml
+	MIGRATE_COMMAND=${MIGRATE_SH}
+	TBLS_COMMAND=tbls --config ${TBLS_CONFIG}
 endif
 
 .PHONY: setup
@@ -70,7 +72,7 @@ migrate-force-v:
 
 .PHONY: migrate-create
 migrate-create:
-	${MIGRATE_COMMAND} create -ext sql -dir "${DB_DDL_DIR}" -seq ${name}
+	${MIGRATE_COMMAND} create ${name}
 
 .PHONY: db-doc
 db-doc:
