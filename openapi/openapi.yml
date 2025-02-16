@@ -15,13 +15,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  costTypes:
-                    description: コスト種別
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/CostType"
+                $ref: "#/components/schemas/GetCostsTypesResponse"
         "500":
           description: 内部エラー
           content:
@@ -241,3 +235,12 @@ components:
         - year
         - month
         - yen
+    GetCostsTypesResponse:
+      description: コスト情報取得のレスポンス
+      type: object
+      properties:
+        costTypes:
+          description: コスト種別
+          type: array
+          items:
+            $ref: "#/components/schemas/CostType"

@@ -1,14 +1,22 @@
 package api
 
 import (
+	"context"
+	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/canpok1/code-gateway/internal/db"
 )
 
-type Server struct{}
+type Server struct {
+	client *db.Queries
+}
 
-func NewServer() ServerInterface {
-	return Server{}
+func NewServer(client *db.Queries) ServerInterface {
+	return Server{
+		client: client,
+	}
 }
 
 // GetApiV1CostsMonthly implements ServerInterface.
@@ -20,9 +28,19 @@ func (s Server) GetApiV1CostsMonthly(w http.ResponseWriter, r *http.Request, par
 
 // GetApiV1CostsTypes implements ServerInterface.
 func (s Server) GetApiV1CostsTypes(w http.ResponseWriter, r *http.Request) {
-	// TODO コスト種別取得処理を実装
+	ctx := context.Background()
+
 	log.Println("called GetApiV1CostsTypes()")
-	panic("unimplemented")
+
+	resp, err := getApiV1CostsTypes(ctx, s.client)
+	if err != nil {
+		log.Printf("%v", err)
+		return
+	}
+	log.Printf("%v\n", resp)
+
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(resp)
 }
 
 // PostApiV1CostsMonthly implements ServerInterface.
