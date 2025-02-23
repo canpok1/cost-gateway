@@ -51,6 +51,15 @@ type GetCostsTypesResponse struct {
 	CostTypes *[]CostType `json:"costTypes,omitempty"`
 }
 
+// PostMonthlyCostsResponse 月次コスト登録のレスポンス
+type PostMonthlyCostsResponse struct {
+	// CostTypeId コスト種別ID
+	CostTypeId int64 `json:"costTypeId"`
+
+	// Count 登録件数
+	Count int32 `json:"count"`
+}
+
 // GetApiV1CostsMonthlyParams defines parameters for GetApiV1CostsMonthly.
 type GetApiV1CostsMonthlyParams struct {
 	// CostTypeId コスト種別ID
