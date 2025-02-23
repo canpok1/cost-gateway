@@ -2,4 +2,5 @@
 
 開発用ドキュメントを配置しています。
 
-- [スキーマ定義](database/README.md)
+- [DBスキーマ定義](database/README.md)
+- [API定義](api/dist/index.html)

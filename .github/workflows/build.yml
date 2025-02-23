@@ -113,11 +113,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download db docs
+      - name: Download db doc
         uses: actions/download-artifact@v4
         with:
           name: db-doc
           path: docs/database
+
+      - name: Generate API doc
+        run: make generate-api-doc
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
