@@ -43,10 +43,20 @@ clean:
 test:
 	go test -v ./...
 
-.PHONY: generate
-generate:
+.PHONY: generate-code
+generate-code:
 	go generate ./...
 	cd db && sqlc generate
+
+.PHONY: generate-api-doc
+generate-api-doc:
+	mkdir -p docs/api
+	curl -L https://github.com/swagger-api/swagger-ui/archive/refs/tags/v5.19.0.zip -o docs/api/swagger-ui.zip
+	unzip docs/api/swagger-ui.zip -d docs/api
+	cp -R docs/api/swagger-ui-5.19.0/dist docs/api/
+	sed -i 's@url:.*@url: "${OPENAPI_YML_URL}",@g' ./docs/api/dist/swagger-initializer.js
+	rm -r docs/api/swagger-ui-5.19.0
+	rm docs/api/swagger-ui.zip
 
 .PHONY: migrate
 migrate:
@@ -87,13 +97,3 @@ db-lint:
 .PHONY: db-diff
 db-diff:
 	${TBLS_COMMAND} diff
-
-.PHONY: generate-api-doc
-generate-api-doc:
-	mkdir -p docs/api
-	curl -L https://github.com/swagger-api/swagger-ui/archive/refs/tags/v5.19.0.zip -o docs/api/swagger-ui.zip
-	unzip docs/api/swagger-ui.zip -d docs/api
-	cp -R docs/api/swagger-ui-5.19.0/dist docs/api/
-	sed -i 's@url:.*@url: "${OPENAPI_YML_URL}",@g' ./docs/api/dist/swagger-initializer.js
-	rm -r docs/api/swagger-ui-5.19.0
-	rm docs/api/swagger-ui.zip

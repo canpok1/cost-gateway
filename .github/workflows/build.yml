@@ -41,7 +41,7 @@ jobs:
 
       - name: Code generate check
         run: |
-          make generate
+          make generate-code
           git diff --exit-code
 
   db-check:
