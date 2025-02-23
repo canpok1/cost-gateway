@@ -2,12 +2,10 @@ package api
 
 import (
 	"context"
-
-	"github.com/canpok1/code-gateway/internal/db"
 )
 
-func getApiV1CostsTypes(ctx context.Context, client *db.Queries) (*GetCostsTypesResponse, error) {
-	records, err := client.GetCostTypes(ctx)
+func (s *Server) getApiV1CostsTypes(ctx context.Context) (*GetCostsTypesResponse, error) {
+	records, err := s.client.GetCostTypes(ctx)
 	if err != nil {
 		return nil, err
 	}

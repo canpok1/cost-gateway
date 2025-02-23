@@ -25,7 +25,7 @@ go.work.sum
 .env
 
 # binary files
-server
+/build/release/server
 
 # Mac Finder file
 .DS_Store
