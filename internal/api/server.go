@@ -35,6 +35,10 @@ func (s *Server) GetApiV1CostsTypes(w http.ResponseWriter, r *http.Request) {
 	resp, err := s.getApiV1CostsTypes(ctx)
 	if err != nil {
 		log.Printf("%v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(ErrorObject{
+			Message: "internal server error",
+		})
 		return
 	}
 	log.Printf("%v\n", resp)
