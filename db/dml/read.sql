@@ -9,3 +9,9 @@ SELECT *
 FROM cost_types
 WHERE type_name = ?
 ;
+
+-- name: FindMonthlyCosts :many
+SELECT mc.*, ct.type_name
+FROM monthly_costs mc
+JOIN cost_types ct ON mc.cost_type_id = ct.id
+;

@@ -27,7 +27,10 @@ func main() {
 
 	r := http.NewServeMux()
 
-	h := api.HandlerFromMux(server, r)
+	h := api.HandlerWithOptions(server, api.StdHTTPServerOptions{
+		BaseRouter:       r,
+		ErrorHandlerFunc: api.HandleClientError,
+	})
 
 	addr := fmt.Sprintf("0.0.0.0:%d", env.ServerPort)
 	log.Printf("listen : %s\n", addr)

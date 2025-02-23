@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"time"
 )
 
 const findCostTypeAll = `-- name: FindCostTypeAll :many
@@ -59,4 +60,51 @@ func (q *Queries) FindCostTypeByTypeName(ctx context.Context, typeName string) (
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const findMonthlyCosts = `-- name: FindMonthlyCosts :many
+SELECT mc.cost_type_id, mc.cost_year, mc.cost_month, mc.cost_yen, mc.created_at, mc.updated_at, ct.type_name
+FROM monthly_costs mc
+JOIN cost_types ct ON mc.cost_type_id = ct.id
+`
+
+type FindMonthlyCostsRow struct {
+	CostTypeID uint64
+	CostYear   uint32
+	CostMonth  uint32
+	CostYen    uint32
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	TypeName   string
+}
+
+func (q *Queries) FindMonthlyCosts(ctx context.Context) ([]FindMonthlyCostsRow, error) {
+	rows, err := q.db.QueryContext(ctx, findMonthlyCosts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindMonthlyCostsRow
+	for rows.Next() {
+		var i FindMonthlyCostsRow
+		if err := rows.Scan(
+			&i.CostTypeID,
+			&i.CostYear,
+			&i.CostMonth,
+			&i.CostYen,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.TypeName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
