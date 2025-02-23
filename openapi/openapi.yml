@@ -77,15 +77,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  costs:
-                    description: コスト情報
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Cost"
-                required:
-                  - costs
+                $ref: "#/components/schemas/GetMonthlyCostsResponse"
         "400":
           description: パラメータ不備
           content:
@@ -229,6 +221,17 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/CostType"
+    GetMonthlyCostsResponse:
+      description: 月次コスト取得のレスポンス
+      type: object
+      properties:
+        costs:
+          description: コスト情報
+          type: array
+          items:
+            $ref: "#/components/schemas/Cost"
+      required:
+        - costs
     PostMonthlyCostsResponse:
       description: 月次コスト登録のレスポンス
       type: object

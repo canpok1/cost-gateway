@@ -21,9 +21,22 @@ func NewServer(database *sql.DB) ServerInterface {
 
 // GetApiV1CostsMonthly implements ServerInterface.
 func (s *Server) GetApiV1CostsMonthly(w http.ResponseWriter, r *http.Request, params GetApiV1CostsMonthlyParams) {
-	// TODO 月次コスト取得処理を実装
+	ctx := context.Background()
+
 	log.Println("called GetApiV1CostsMonthly()")
-	panic("unimplemented")
+
+	resp, err := s.getApiV1CostsMonthly(ctx, &params)
+	if err != nil {
+		log.Printf("%v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorObject{
+			Message: "internal server error",
+		})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(resp)
 }
 
 // GetApiV1CostsTypes implements ServerInterface.
@@ -36,12 +49,11 @@ func (s *Server) GetApiV1CostsTypes(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("%v", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(ErrorObject{
+		json.NewEncoder(w).Encode(ErrorObject{
 			Message: "internal server error",
 		})
 		return
 	}
-	log.Printf("%v\n", resp)
 
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(resp)
