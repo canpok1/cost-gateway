@@ -145,22 +145,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  count:
-                    description: 登録件数
-                    type: integer
-                    format: int32
-                    minimum: 0
-                  costTypeId:
-                    description: コスト種別ID
-                    type: integer
-                    format: int64
-                    minimum: 0
-                    maximum: 18446744073709551615
-                required:
-                  - count
-                  - costTypeId
+                $ref: "#/components/schemas/PostMonthlyCostsResponse"
         "400":
           description: パラメータ不備
           content:
@@ -244,3 +229,21 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/CostType"
+    PostMonthlyCostsResponse:
+      description: 月次コスト登録のレスポンス
+      type: object
+      properties:
+        count:
+          description: 登録件数
+          type: integer
+          format: int32
+          minimum: 0
+        costTypeId:
+          description: コスト種別ID
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 18446744073709551615
+      required:
+        - count
+        - costTypeId

@@ -9,14 +9,14 @@ import (
 	"context"
 )
 
-const getCostTypes = `-- name: GetCostTypes :many
+const findCostTypeAll = `-- name: FindCostTypeAll :many
 SELECT id, type_name, created_at, updated_at
 FROM cost_types
 ORDER BY created_at
 `
 
-func (q *Queries) GetCostTypes(ctx context.Context) ([]CostType, error) {
-	rows, err := q.db.QueryContext(ctx, getCostTypes)
+func (q *Queries) FindCostTypeAll(ctx context.Context) ([]CostType, error) {
+	rows, err := q.db.QueryContext(ctx, findCostTypeAll)
 	if err != nil {
 		return nil, err
 	}
@@ -41,4 +41,22 @@ func (q *Queries) GetCostTypes(ctx context.Context) ([]CostType, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const findCostTypeByTypeName = `-- name: FindCostTypeByTypeName :one
+SELECT id, type_name, created_at, updated_at
+FROM cost_types
+WHERE type_name = ?
+`
+
+func (q *Queries) FindCostTypeByTypeName(ctx context.Context, typeName string) (CostType, error) {
+	row := q.db.QueryRowContext(ctx, findCostTypeByTypeName, typeName)
+	var i CostType
+	err := row.Scan(
+		&i.ID,
+		&i.TypeName,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

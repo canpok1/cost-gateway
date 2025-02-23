@@ -2,20 +2,20 @@ package api
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/canpok1/code-gateway/internal/db"
 )
 
 type Server struct {
-	client *db.Queries
+	db *sql.DB
 }
 
-func NewServer(client *db.Queries) ServerInterface {
+func NewServer(database *sql.DB) ServerInterface {
 	return &Server{
-		client: client,
+		db: database,
 	}
 }
 
@@ -49,7 +49,31 @@ func (s *Server) GetApiV1CostsTypes(w http.ResponseWriter, r *http.Request) {
 
 // PostApiV1CostsMonthly implements ServerInterface.
 func (s *Server) PostApiV1CostsMonthly(w http.ResponseWriter, r *http.Request) {
-	// TODO 月次コスト登録処理を実装
+	ctx := context.Background()
+
 	log.Println("called PostApiV1CostsMonthly()")
-	panic("unimplemented")
+
+	var body PostApiV1CostsMonthlyJSONRequestBody
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		log.Printf("error occured: %v\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorObject{
+			Message: fmt.Sprintf("failed to parse request body, %v", err),
+		})
+		return
+	}
+
+	resp, err := s.postApiV1CostsMonthly(ctx, &body)
+	if err != nil {
+		log.Printf("error occured: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorObject{
+			Message: "internal server error",
+		})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
 }
