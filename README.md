@@ -4,7 +4,7 @@
 
 ```
 # generate server code
-make generate
+make generate-code
 
 # db migration
 make migrate-version

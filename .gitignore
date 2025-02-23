@@ -27,5 +27,9 @@ go.work.sum
 # binary files
 server
 
+# Mac Finder file
+.DS_Store
+
 # generated docs
 docs/database/
+docs/api/
