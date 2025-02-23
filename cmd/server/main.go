@@ -23,8 +23,7 @@ func main() {
 	}
 	defer database.Close()
 
-	client := db.New(database)
-	server := api.NewServer(client)
+	server := api.NewServer(database)
 
 	r := http.NewServeMux()
 
