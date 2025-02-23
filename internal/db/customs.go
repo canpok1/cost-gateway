@@ -2,9 +2,7 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"strings"
 )
 
 type FindMonthlyCostsCondition struct {
@@ -16,33 +14,27 @@ type FindMonthlyCostsCondition struct {
 }
 
 func (q *Queries) FindMonthlyCostsByCondition(ctx context.Context, cond *FindMonthlyCostsCondition) ([]FindMonthlyCostsRow, error) {
-	whereConditions := []string{}
-	whereValues := []interface{}{}
+	builder := NewQueryBuilder(findMonthlyCosts)
 
-	whereConditions = append(whereConditions, "cost_type_id = ?")
-	whereValues = append(whereValues, cond.CostTypeID)
+	builder.AddCondition("cost_type_id = ?", cond.CostTypeID)
 
 	if cond.BeginYear != nil {
-		whereConditions = append(whereConditions, "begin_year = ?")
-		whereValues = append(whereValues, cond.BeginYear)
+		builder.AddCondition("cost_year >= ?", cond.BeginYear)
 	}
 	if cond.BeginMonth != nil {
-		whereConditions = append(whereConditions, "begin_month = ?")
-		whereValues = append(whereValues, cond.BeginMonth)
+		builder.AddCondition("cost_month >= ?", cond.BeginMonth)
 	}
 	if cond.EndYear != nil {
-		whereConditions = append(whereConditions, "end_year = ?")
-		whereValues = append(whereValues, cond.EndYear)
+		builder.AddCondition("cost_year <= ?", cond.EndYear)
 	}
 	if cond.EndMonth != nil {
-		whereConditions = append(whereConditions, "end_month = ?")
-		whereValues = append(whereValues, cond.EndMonth)
+		builder.AddCondition("cost_month <= ?", cond.EndMonth)
 	}
 
-	sql := fmt.Sprintf("%s WHERE %s", findMonthlyCosts, strings.Join(whereConditions, " AND "))
+	sql, values := builder.Build()
 	log.Println(sql)
 
-	rows, err := q.db.QueryContext(ctx, sql, whereValues...)
+	rows, err := q.db.QueryContext(ctx, sql, values...)
 	if err != nil {
 		return nil, err
 	}
