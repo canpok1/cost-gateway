@@ -1,6 +1,6 @@
 version: "3"
 services:
-  server:
+  cost-gateway-server:
     image: ghcr.io/canpok1/cost-gateway/server:latest
     env_file:
       - ".env"
