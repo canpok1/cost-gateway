@@ -121,7 +121,7 @@ jobs:
           name: db-doc
           path: docs/database
 
-  deploy_public:
+  deploy-public:
     runs-on: ubuntu-latest
     needs: [build, generate-check, db-check]
     if: github.ref == 'refs/heads/main'
@@ -149,8 +149,8 @@ jobs:
   db-migration:
     runs-on: ubuntu-latest
     needs: [build, generate-check, db-check]
-    if: github.ref == 'refs/heads/main'
     environment: production-web
+    if: github.ref == 'refs/heads/main'
     env:
       MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
       MYSQL_USER: ${{ secrets.MYSQL_USER}}
@@ -177,7 +177,28 @@ jobs:
 
       - name: create SSH tunnel
         run: |
-          ssh -f -N -L ${MYSQL_PORT}:localhost:${{ secrets.MYSQL_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.HOST }}
+          ssh -f -N -L ${MYSQL_PORT}:localhost:${{ secrets.MYSQL_PORT }} -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.HOST }}
 
       - name: run migrate up
         run: make migrate-up-all
+
+  deploy-web:
+    runs-on: ubuntu-latest
+    needs: [db-migration]
+    environment: production-web
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to web server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ vars.DEPLOY_DIR }}
+            git checkout main
+            git pull origin main
+            docker-compose pull
+            docker-compose up -d
+            docker system prune -f
