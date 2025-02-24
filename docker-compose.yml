@@ -1,0 +1,12 @@
+version: "3"
+services:
+  server:
+    image: ghcr.io/canpok1/cost-gateway/server:latest
+    env_file:
+      - ".env"
+    restart: always
+
+networks:
+  default:
+    external:
+      name: common-database-network
