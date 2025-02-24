@@ -17,6 +17,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Printf("DB HOST: %s\n", env.MysqlHost)
+	log.Printf("DB PORT: %v\n", env.MysqlPort)
+	log.Printf("DB USER: %v\n", env.MysqlUser)
+
 	database, err := db.Open(env.MysqlHost, env.MysqlPort, env.MysqlUser, env.MysqlPassword, env.MysqlDatabase)
 	if err != nil {
 		log.Fatal(err)
