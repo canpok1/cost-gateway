@@ -149,6 +149,7 @@ jobs:
   db-migration:
     runs-on: ubuntu-latest
     needs: [build, generate-check, db-check]
+    environment: production-web
     env:
       MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
       MYSQL_USER: ${{ secrets.MYSQL_USER}}
