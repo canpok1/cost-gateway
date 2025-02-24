@@ -175,7 +175,7 @@ jobs:
 
       - name: create SSH tunnel
         run: |
-          ssh -f -N -L ${{ MYSQL_PORT }}:localhost:${{ secrets.MYSQL_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.HOST }}
+          ssh -f -N -L ${MYSQL_PORT}:localhost:${{ secrets.MYSQL_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.HOST }}
 
       - name: run migrate up
         run: make migrate-up-all
