@@ -145,3 +145,39 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
           enable_jekyll: true
+
+  db-migration:
+    runs-on: ubuntu-latest
+    needs: [build, generate-check, db-check]
+    if: github.ref == 'refs/heads/main'
+    environment: production-web
+    env:
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      MYSQL_USER: ${{ secrets.MYSQL_USER}}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_HOST: localhost
+      MYSQL_PORT: 3306
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install migrate command
+        env:
+          VERSION: 4.18.2
+        run: |
+          curl -o migrate.deb -L https://github.com/golang-migrate/migrate/releases/download/v${VERSION}/migrate.linux-amd64.deb
+          sudo dpkg -i migrate.deb
+          rm migrate.deb
+
+      - name: setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: create SSH tunnel
+        run: |
+          ssh -f -N -L ${MYSQL_PORT}:localhost:${{ secrets.MYSQL_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.HOST }}
+
+      - name: run migrate up
+        run: make migrate-up-all
