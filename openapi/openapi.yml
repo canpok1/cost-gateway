@@ -12,6 +12,11 @@ paths:
       responses:
         "200":
           description: 取得成功
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+              description: 許可されるオリジン
           content:
             application/json:
               schema:
@@ -74,6 +79,11 @@ paths:
       responses:
         "200":
           description: 取得成功
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+              description: 許可されるオリジン
           content:
             application/json:
               schema:
@@ -134,6 +144,11 @@ paths:
       responses:
         "200":
           description: 登録成功
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+              description: 許可されるオリジン
           content:
             application/json:
               schema:

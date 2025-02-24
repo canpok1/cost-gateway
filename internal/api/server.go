@@ -35,8 +35,9 @@ func (s *Server) GetApiV1CostsMonthly(w http.ResponseWriter, r *http.Request, pa
 		return
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(resp)
+	json.NewEncoder(w).Encode(resp)
 }
 
 // GetApiV1CostsTypes implements ServerInterface.
@@ -55,8 +56,9 @@ func (s *Server) GetApiV1CostsTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(resp)
+	json.NewEncoder(w).Encode(resp)
 }
 
 // PostApiV1CostsMonthly implements ServerInterface.
@@ -86,6 +88,7 @@ func (s *Server) PostApiV1CostsMonthly(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
 }
