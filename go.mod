@@ -5,7 +5,7 @@ go 1.23.6
 require (
 	github.com/go-sql-driver/mysql v1.9.2
 	github.com/oapi-codegen/runtime v1.1.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 )
 
 require (
